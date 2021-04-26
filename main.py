@@ -12,6 +12,7 @@ from bot.states import RegisterSteps
 
 logger = get_logger(__name__)
 
+
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/contact", description="Contact us"),
@@ -29,6 +30,13 @@ async def main():
 
     dp.register_message_handler(registration.cmd_start, commands=["start"])
     dp.register_message_handler(registration.cmd_text_go, state=RegisterSteps.go)
+    dp.register_message_handler(registration.stage_name, state=RegisterSteps.name)
+    dp.register_message_handler(
+        registration.stage_graduate, state=RegisterSteps.is_graduate
+    )
+    dp.register_message_handler(
+        registration.stage_university, state=RegisterSteps.university
+    )
 
     try:
         await dp.start_polling()
@@ -36,5 +44,5 @@ async def main():
         await bot.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
