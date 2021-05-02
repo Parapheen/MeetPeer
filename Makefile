@@ -1,4 +1,4 @@
-START_FILE	=	main.py
+WORKDIR		=	bot
 
 polling:
-	python3 ${START_FILE}
+	python3 -m ${WORKDIR}

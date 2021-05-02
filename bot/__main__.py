@@ -5,11 +5,11 @@ from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
-from bot.settings import BotConfig
-from bot.handlers import registration, extra
-from bot.logger import get_logger
-from bot.states import RegisterSteps
-from bot.middlewares import ThrottlingMiddleware
+from .settings import BotConfig
+from .handlers import registration, extra
+from .logger import get_logger
+from .states import RegisterSteps
+from .middlewares import ThrottlingMiddleware
 
 logger = get_logger(__name__)
 
@@ -47,20 +47,21 @@ def register_handlers(dp: Dispatcher):
     dp.register_message_handler(registration.stage_active, state=RegisterSteps.active)
 
 
-async def get_bot():
+async def on_startup(dp: Dispatcher):
+    await set_commands(dp.bot)
+    dp.middleware.setup(ThrottlingMiddleware())
+    register_handlers(dp)
+
+
+def get_bot():
     logger.info("Starting bot")
     bot = Bot(token=BotConfig.TOKEN)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
-
-    await set_commands(bot)
-
-    dp.middleware.setup(ThrottlingMiddleware())
-    register_handlers(dp)
 
     return dp
 
 
 if __name__ == "__main__":
     dp = get_bot()
-    executor.start_polling(dp)
+    executor.start_polling(dp, on_startup=on_startup)
