@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, List, Any, Optional
+from datetime import datetime
+
 from bot.states import UserState
 
 
@@ -10,7 +12,9 @@ class User:
     name: str = None
     university: str = None
     peers_met: str = None
-    is_graduate: bool = False
-    cross_meet: bool = False
-    frequency_weekly: int = 1
+    is_graduate: bool = None
+    grad_year: int = None
+    payment_pending: bool = None
+    frequency: int = None
+    frequency_updated: datetime = None
     state: UserState = UserState.go

@@ -9,8 +9,9 @@ class UserState(int, Enum):
     is_graduate = 3
     university = 4
     grad_year = 5
-    frequency = 6
+    payment = 6
     active = 7
+    inactive = 8
 
 
 class RegisterSteps(StatesGroup):
@@ -19,5 +20,5 @@ class RegisterSteps(StatesGroup):
     is_graduate = State()
     university = State()
     grad_year = State()
-    frequency = State()
+    payment = State()
     active = State()
