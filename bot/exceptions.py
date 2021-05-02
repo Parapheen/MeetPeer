@@ -1,4 +1,3 @@
-
 class AirtableRequestError(Exception):
     """
     Same for airtable

@@ -1,4 +1,4 @@
 START_FILE	=	main.py
 
-dev:
+polling:
 	python3 ${START_FILE}

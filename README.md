@@ -7,5 +7,5 @@ https://t.me/meetpeer_bot
 # Get started
 
 ```
-make dev
+make polling
 ```
