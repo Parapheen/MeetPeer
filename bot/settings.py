@@ -9,6 +9,7 @@ load_dotenv(override=True)
 @dataclass
 class BotConfig:
     TOKEN = os.getenv("BOT_TOKEN")
+    TOKEN_DEV = os.getenv("BOT_DEV")
 
 
 @dataclass
