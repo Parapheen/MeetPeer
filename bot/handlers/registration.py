@@ -61,7 +61,7 @@ async def stage_name(message: types.Message, state: FSMContext):
 
 
 async def stage_graduate(message: types.Message, state: FSMContext):
-    if message.text == "Студент":
+    if message.text.lower() == "студент":
         await AirtableAPI.update_user(
             message.from_user.id, state=UserState.is_graduate, is_graduate=False
         )
@@ -69,7 +69,7 @@ async def stage_graduate(message: types.Message, state: FSMContext):
             "Круто 😎\n\nГде ты учишься? Мы постараемся подобрать студентов и выпускников из твоего вуза.",
             reply_markup=types.ReplyKeyboardRemove(),
         )
-    elif message.text == "Выпускник":
+    elif message.text.lower() == "выпускник":
         await AirtableAPI.update_user(
             message.from_user.id, state=UserState.is_graduate, is_graduate=True
         )
@@ -160,20 +160,24 @@ async def stage_payment(message: types.Message, state: FSMContext):
             "Оплату можно произвести по ссылке — https://yoomoney.ru/to/410019123578551\n\nВ комментарии к платежу обязательно укажи свой username.",
             reply_markup=keyboard,
         )
+    else:
+        await message.answer("Пожалуйста, выбери предложенный вариант.")
+        return
     await RegisterSteps.next()
 
 
 async def stage_active(message: types.Message, state: FSMContext):
-    if message.text == "Оплата произведена ✅":
+    if message.text.lower() == "оплата произведена ✅":
         await message.answer(
             "Мы обработаем платеж в течение суток, с новой недели ты будешь получать три новых контакта для знакомства!",
             reply_markup=types.ReplyKeyboardRemove(),
         )
-    elif message.text == "Все понятно!":
+    elif message.text.lower() == "все понятно!":
         await message.answer("Супер!", reply_markup=types.ReplyKeyboardRemove())
     await AirtableAPI.update_user(message.from_user.id, state=UserState.active)
     await message.answer("Записал тебя. В понедельник пришлю контакты для встреч!")
     await message.answer(
-        "Ты сможешь изменить свои настройки через команду /settings. Связаться с нами можно через команду /contact.\n\nНадеемся, что ты найдешь отличные знакомства через MeetPeer!"
+        "Ты сможешь изменить свои настройки через команду /settings. Связаться с нами можно через команду /contact.\n\nНадеемся, что ты найдешь отличные знакомства через MeetPeer!",
+        reply_markup=types.ReplyKeyboardRemove(),
     )
     await state.finish()
