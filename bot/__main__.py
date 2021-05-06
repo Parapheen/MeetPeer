@@ -2,12 +2,12 @@ import asyncio
 import logging
 import argparse
 
-from aiogram import Bot, Dispatcher, executor
+from aiogram import Bot, Dispatcher, executor, filters
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
 from .settings import BotConfig, AirtableConfig
-from .handlers import registration, extra
+from .handlers import registration, extra, admin
 from .logger import get_logger
 from .states import RegisterSteps
 from .middlewares import ThrottlingMiddleware
@@ -28,6 +28,12 @@ async def set_commands(bot: Bot):
 
 
 def register_handlers(dp: Dispatcher):
+    dp.register_message_handler(
+        admin.send_message,
+        filters.IDFilter(user_id=BotConfig.ADMINS),
+        commands=["send"],
+    )
+
     dp.register_message_handler(extra.contact, commands=["contact"])
     dp.register_message_handler(extra.change_status, commands=["status"])
     dp.register_message_handler(extra.change_payment, commands=["payment"])
@@ -66,13 +72,12 @@ def get_bot(dev: bool = False):
     return dp
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("dev")
-    args = parser.parse_args()
-    dev = False
-    if args.dev:
-        AirtableConfig.set_dev()
-        dev = True
-    dp = get_bot(dev)
-    executor.start_polling(dp, on_startup=on_startup)
+parser = argparse.ArgumentParser()
+parser.add_argument("dev")
+args = parser.parse_args()
+dev = False
+if args.dev:
+    AirtableConfig.set_dev()
+    dev = True
+dp = get_bot(dev)
+executor.start_polling(dp, on_startup=on_startup)
