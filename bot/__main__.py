@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
-from .settings import BotConfig
+from .settings import BotConfig, AirtableConfig
 from .handlers import registration, extra
 from .logger import get_logger
 from .states import RegisterSteps
@@ -72,6 +72,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dev = False
     if args.dev:
+        AirtableConfig.set_dev()
         dev = True
     dp = get_bot(dev)
     executor.start_polling(dp, on_startup=on_startup)
