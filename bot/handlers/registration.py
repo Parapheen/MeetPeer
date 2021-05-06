@@ -9,7 +9,7 @@ from bot.airtable import AirtableAPI
 
 
 async def cmd_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     start_button = types.KeyboardButton(text="Поехали!")
     keyboard.add(start_button)
     await message.answer(
@@ -46,7 +46,7 @@ async def stage_name(message: types.Message, state: FSMContext):
         message.from_user.id, state=UserState.name, name=message.text
     )
     await message.reply(f"Приятно познакомиться, {message.text}!")
-    keyboard = types.ReplyKeyboardMarkup()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = [
         types.KeyboardButton(text="Студент"),
         types.KeyboardButton(text="Выпускник"),
@@ -103,7 +103,7 @@ async def stage_grad_year(message: types.Message, state: FSMContext):
         await AirtableAPI.update_user(
             message.from_user.id, state=UserState.grad_year, grad_year=int(message.text)
         )
-        keyboard = types.ReplyKeyboardMarkup()
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         buttons = [
             types.KeyboardButton(text="1 раз (Бесплатно)"),
             types.KeyboardButton(text="3 раза (100 рублей в месяц)"),
@@ -124,7 +124,7 @@ async def stage_payment(message: types.Message, state: FSMContext):
             frequency=1,
             frequency_updated=str(datetime.utcnow()),
         )
-        keyboard = types.ReplyKeyboardMarkup()
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         buttons = [
             types.KeyboardButton(text="Все понятно!"),
         ]
@@ -147,7 +147,7 @@ async def stage_payment(message: types.Message, state: FSMContext):
         )
         await message.answer("https://disk.yandex.ru/i/8tLxmWvFp28-Bg")
         await asyncio.sleep(10)
-        keyboard = types.ReplyKeyboardMarkup()
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
         buttons = [
             types.KeyboardButton(text="Оплата произведена ✅"),
         ]

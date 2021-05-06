@@ -1,11 +1,12 @@
 import asyncio
 import logging
+import argparse
 
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
-from .settings import BotConfig
+from .settings import BotConfig, AirtableConfig
 from .handlers import registration, extra
 from .logger import get_logger
 from .states import RegisterSteps
@@ -53,9 +54,12 @@ async def on_startup(dp: Dispatcher):
     register_handlers(dp)
 
 
-def get_bot():
+def get_bot(dev: bool = False):
     logger.info("Starting bot")
-    bot = Bot(token=BotConfig.TOKEN)
+    if dev:
+        bot = Bot(token=BotConfig.TOKEN_DEV)
+    else:
+        bot = Bot(token=BotConfig.TOKEN)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
 
@@ -63,5 +67,12 @@ def get_bot():
 
 
 if __name__ == "__main__":
-    dp = get_bot()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dev")
+    args = parser.parse_args()
+    dev = False
+    if args.dev:
+        AirtableConfig.set_dev()
+        dev = True
+    dp = get_bot(dev)
     executor.start_polling(dp, on_startup=on_startup)
