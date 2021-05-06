@@ -10,6 +10,7 @@ load_dotenv(override=True)
 class BotConfig:
     TOKEN = os.getenv("BOT_TOKEN")
     TOKEN_DEV = os.getenv("BOT_DEV")
+    ADMINS = os.getenv("ADMINS").split(" ")
 
 
 @dataclass

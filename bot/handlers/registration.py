@@ -6,9 +6,13 @@ from aiogram.dispatcher import FSMContext
 
 from bot.states import RegisterSteps, UserState
 from bot.airtable import AirtableAPI
+from bot.settings import BotConfig
 
 
 async def cmd_start(message: types.Message):
+    await message.bot.send_message(
+        int(BotConfig.ADMINS[0]), f"New user @{message.from_user.username}"
+    )
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     start_button = types.KeyboardButton(text="Поехали!")
     keyboard.add(start_button)
