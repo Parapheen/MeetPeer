@@ -73,7 +73,7 @@ def get_bot(dev: bool = False):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("dev")
+parser.add_argument("dev", default=False)
 args = parser.parse_args()
 dev = False
 if args.dev:
