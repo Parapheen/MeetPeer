@@ -23,9 +23,11 @@ class AirtableConfig:
     HEADERS = {"Authorization": "Bearer {}".format(TOKEN)}
 
     USERS = f"{BASE_URL}Users"
+    PAIRS = f"{BASE_URL}Pairs"
 
     def set_dev():
         AirtableConfig.BASE_URL = "https://api.airtable.com/v0/{}/".format(
             AirtableConfig.TEST_APP_ID
         )
         AirtableConfig.USERS = f"{AirtableConfig.BASE_URL}Users"
+        AirtableConfig.PAIRS = f"{AirtableConfig.BASE_URL}Pairs"
