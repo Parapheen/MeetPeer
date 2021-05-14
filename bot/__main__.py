@@ -77,8 +77,13 @@ def get_bot(dev: bool = False):
     return dp
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--mode", dest="mode", required=True, help="Bot mode", choices=["prod", "dev"]
+)
+args = parser.parse_args()
 dev = False
-if dev:
+if args.mode == "dev":
     AirtableConfig.set_dev()
     dev = True
 dp = get_bot(dev)
