@@ -33,6 +33,11 @@ def register_handlers(dp: Dispatcher):
         filters.IDFilter(user_id=BotConfig.ADMINS),
         commands=["send"],
     )
+    dp.register_message_handler(
+        admin.ask_for_feedback,
+        filters.IDFilter(user_id=BotConfig.ADMINS),
+        commands=["feedback"],
+    )
 
     dp.register_message_handler(extra.contact, commands=["contact"])
     dp.register_message_handler(extra.change_status, commands=["status"])
@@ -72,12 +77,14 @@ def get_bot(dev: bool = False):
     return dp
 
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument("dev", default=False, required=False)
-# args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--mode", dest="mode", required=True, help="Bot mode", choices=["prod", "dev"]
+)
+args = parser.parse_args()
 dev = False
-# if args.dev:
-#     AirtableConfig.set_dev()
-#     dev = True
+if args.mode == "dev":
+    AirtableConfig.set_dev()
+    dev = True
 dp = get_bot(dev)
 executor.start_polling(dp, on_startup=on_startup)
