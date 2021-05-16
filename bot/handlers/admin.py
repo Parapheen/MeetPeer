@@ -72,6 +72,8 @@ async def send_push(message=types.Message):
     for users with status < 6
     """
     users_to_push = await AirtableAPI.get_users_to_push()
+    if not users_to_push["records"]:
+        return
     user_ids = [user["fields"]["tg_id"] for user in users_to_push["records"]]
     bot = message.bot
     text = """
