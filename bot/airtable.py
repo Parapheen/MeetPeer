@@ -48,6 +48,25 @@ class AirtableAPI:
             else:
                 return resp
 
+    async def get_users_to_push():
+        column = "state"
+        params = {"filterByFormula": f"{column}<6"}
+
+        try:
+            async with aiohttp.ClientSession() as cs:
+                async with cs.get(
+                    AirtableConfig.USERS, params=params, headers=AirtableConfig.HEADERS
+                ) as r:
+                    resp = await r.json()
+        except (aiohttp.ClientResponseError, aiohttp.ClientConnectorError):
+            logger.exception("Problem when sending request")
+            raise
+        else:
+            if "error" in resp:
+                raise AirtableRequestError(resp["error"]["message"])
+            else:
+                return resp
+
     async def create_user(**kwargs):
         user = User(**kwargs)
         user_dict = asdict(user)
