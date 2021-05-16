@@ -39,7 +39,7 @@ async def send_message(message: types.Message):
     bot = message.bot
     user_id = int(message.text.split(" ")[1])
     text = message.text.split(" | ")[-1]
-    await send(bot, user_id, text)
+    await send(bot, user_id, text, message)
 
 
 async def ask_for_feedback(message=types.Message):
@@ -65,3 +65,23 @@ async def ask_for_feedback(message=types.Message):
         """
             await send(bot, user, text, message)
         await AirtableAPI.update_pair(pair[0], pair[1], feedback_message=True)
+
+
+async def send_push(message=types.Message):
+    """Send push notifications to finish registration
+    for users with status < 6
+    """
+    users_to_push = await AirtableAPI.get_users_to_push()
+    user_ids = [user["fields"]["tg_id"] for user in users_to_push["records"]]
+    bot = message.bot
+    text = """
+Привет!
+
+Следующий круг знакомств начинается в этот понедельник. Заполни свой профиль до конца, чтобы мы смогли найти тебе пару!
+
+Заполнить профиль можно через команду /settings.
+
+До встречи в понедельник!
+    """
+    for user in user_ids:
+        await send(bot, user, text, message)

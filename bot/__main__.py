@@ -38,6 +38,11 @@ def register_handlers(dp: Dispatcher):
         filters.IDFilter(user_id=BotConfig.ADMINS),
         commands=["feedback"],
     )
+    dp.register_message_handler(
+        admin.send_push,
+        filters.IDFilter(user_id=BotConfig.ADMINS),
+        commands=["push"],
+    )
 
     dp.register_message_handler(extra.contact, commands=["contact"])
     dp.register_message_handler(extra.change_status, commands=["status"])
