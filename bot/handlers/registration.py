@@ -46,6 +46,12 @@ async def cmd_text_go(message: types.Message, state: FSMContext):
 
 
 async def stage_name(message: types.Message, state: FSMContext):
+    if message.text[0].islower():
+        await message.answer("Пожалуйста, введи свое имя с большой буквы 🙂")
+        return
+    elif len(message.text.split(" ")) > 1:
+        await message.answer("Пожалуйста, введи только свое имя 🙂")
+        return
     await AirtableAPI.update_user(
         message.from_user.id, state=UserState.name, name=message.text
     )

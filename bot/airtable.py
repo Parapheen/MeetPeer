@@ -67,6 +67,24 @@ class AirtableAPI:
             else:
                 return resp
 
+    async def get_active_users():
+        column = "state"
+        params = {"filterByFormula": f"AND({column}>=6, {column}!=8)"}
+        try:
+            async with aiohttp.ClientSession() as cs:
+                async with cs.get(
+                    AirtableConfig.USERS, params=params, headers=AirtableConfig.HEADERS
+                ) as r:
+                    resp = await r.json()
+        except (aiohttp.ClientResponseError, aiohttp.ClientConnectorError):
+            logger.exception("Problem when sending request")
+            raise
+        else:
+            if "error" in resp:
+                raise AirtableRequestError(resp["error"]["message"])
+            else:
+                return resp
+
     async def create_user(**kwargs):
         user = User(**kwargs)
         user_dict = asdict(user)
@@ -94,6 +112,26 @@ class AirtableAPI:
                 raise AirtableRequestError(resp["error"]["message"])
             else:
                 logger.info("Succesfully added user in Airtable")
+                return resp
+
+    async def create_pair(user_a: str, user_b: str):
+        data = {"fields": {"user_a": user_a, "user_b": user_b}}
+
+        try:
+            async with aiohttp.ClientSession() as cs:
+                async with cs.post(
+                    AirtableConfig.PAIRS, json=data, headers=AirtableConfig.HEADERS
+                ) as r:
+                    resp = await r.json()
+        except (aiohttp.ClientResponseError, aiohttp.ClientConnectorError):
+            logger.exception("Problem when sending request")
+            raise
+        else:
+            if "error" in resp:
+                logger.error("Error response from adding participant to airtable")
+                raise AirtableRequestError(resp["error"]["message"])
+            else:
+                logger.info("Succesfully added pair in Airtable")
                 return resp
 
     async def update_user(tg_id: str, **kwargs):
