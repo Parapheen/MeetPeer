@@ -80,6 +80,6 @@ async def randomize(message: types.Message):
             grad_year=grad_year_a,
         )
 
-        await send(bot, user_a["tg_id"], message_a)
-        await send(bot, user_b["tg_id"], message_b)
+        await send(bot, user_a["tg_id"], message_a, message)
+        await send(bot, user_b["tg_id"], message_b, message)
         await AirtableAPI.create_pair(int(user_a["tg_id"]), int(user_b["tg_id"]))
