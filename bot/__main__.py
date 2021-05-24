@@ -1,5 +1,3 @@
-import asyncio
-import logging
 import argparse
 
 from aiogram import Bot, Dispatcher, executor, filters
@@ -7,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
 from .settings import BotConfig, AirtableConfig
-from .handlers import registration, extra, admin
+from .handlers import registration, extra, admin, matcher
 from .logger import get_logger
 from .states import RegisterSteps
 from .middlewares import ThrottlingMiddleware
@@ -42,6 +40,11 @@ def register_handlers(dp: Dispatcher):
         admin.send_push,
         filters.IDFilter(user_id=BotConfig.ADMINS),
         commands=["push"],
+    )
+    dp.register_message_handler(
+        matcher.randomize,
+        filters.IDFilter(user_id=BotConfig.ADMINS),
+        commands=["roll"],
     )
 
     dp.register_message_handler(extra.contact, commands=["contact"])
