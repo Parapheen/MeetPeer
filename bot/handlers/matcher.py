@@ -6,9 +6,7 @@ from ..airtable import AirtableAPI
 from .admin import send
 
 ROLL_MESSAGE = """
-Сорри, за косяк в рассылке вчера.
-
-Твоя пара на эту неделю — [{name}]({tg_id}) {username}, {title} {university}, {grad_year}. 
+Твоя пара на эту неделю — <a href="{tg_id}">{name}</a> {username}, {title} {university}, {grad_year}. 
 
 Советуем прямо сейчас написать и договориться о звонке или встрече 🙂
 
@@ -90,13 +88,13 @@ async def randomize(message: types.Message):
             user_a["tg_id"],
             message_a,
             message,
-            parse_mode=types.ParseMode.MARKDOWN,
+            parse_mode=types.ParseMode.HTML,
         )
         await send(
             bot,
             user_b["tg_id"],
             message_b,
             message,
-            parse_mode=types.ParseMode.MARKDOWN,
+            parse_mode=types.ParseMode.HTML,
         )
         await AirtableAPI.create_pair(int(user_a["tg_id"]), int(user_b["tg_id"]))
