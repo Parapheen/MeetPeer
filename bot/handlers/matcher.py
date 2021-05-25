@@ -1,4 +1,3 @@
-from os import name
 import random
 
 from aiogram import types
@@ -7,7 +6,9 @@ from ..airtable import AirtableAPI
 from .admin import send
 
 ROLL_MESSAGE = """
-Твоя пара на эту неделю — {name} ({tg_id}), {title} {university}, {grad_year}. 
+Сорри, за косяк в рассылке вчера.
+
+Твоя пара на эту неделю — [{name}]({tg_id}), {title} {university}, {grad_year}. 
 
 Советуем прямо сейчас написать и договориться о звонке или встрече 🙂
 
@@ -46,9 +47,9 @@ async def randomize(message: types.Message):
         already_paired = await AirtableAPI.get_pair(a["tg_id"], b["tg_id"])
         if already_paired["records"] or a == b:
             await message.reply(
-                "В моем рандоме уже есть встретившаяся пара, попробую еще раз!"
+                "В моем рандоме уже есть встретившаяся пара, попробуй еще раз!"
             )
-            await randomize(message)
+            return
         pairs.append((a, b))
     for pair in pairs:
         user_a = pair[0]
@@ -80,6 +81,18 @@ async def randomize(message: types.Message):
             grad_year=grad_year_a,
         )
 
-        await send(bot, user_a["tg_id"], message_a, message)
-        await send(bot, user_b["tg_id"], message_b, message)
+        await send(
+            bot,
+            user_a["tg_id"],
+            message_a,
+            message,
+            parse_mode=types.ParseMode.MARKDOWN,
+        )
+        await send(
+            bot,
+            user_b["tg_id"],
+            message_b,
+            message,
+            parse_mode=types.ParseMode.MARKDOWN,
+        )
         await AirtableAPI.create_pair(int(user_a["tg_id"]), int(user_b["tg_id"]))
