@@ -1,4 +1,3 @@
-from os import name
 import random
 
 from aiogram import types
@@ -7,7 +6,9 @@ from ..airtable import AirtableAPI
 from .admin import send
 
 ROLL_MESSAGE = """
-Твоя пара на эту неделю — {name} ({tg_id}), {title} {university}, {grad_year}. 
+Сорри, за косяк в рассылке вчера.
+
+Твоя пара на эту неделю — [{name}]({tg_id}) {username}, {title} {university}, {grad_year}. 
 
 Советуем прямо сейчас написать и договориться о звонке или встрече 🙂
 
@@ -46,9 +47,9 @@ async def randomize(message: types.Message):
         already_paired = await AirtableAPI.get_pair(a["tg_id"], b["tg_id"])
         if already_paired["records"] or a == b:
             await message.reply(
-                "В моем рандоме уже есть встретившаяся пара, попробую еще раз!"
+                "В моем рандоме уже есть встретившаяся пара, попробуй еще раз!"
             )
-            await randomize(message)
+            return
         pairs.append((a, b))
     for pair in pairs:
         user_a = pair[0]
@@ -58,6 +59,8 @@ async def randomize(message: types.Message):
         name_b = user_b["name"]
         tg_id_a = "tg://user?id={}".format(user_a["tg_id"])
         tg_id_b = "tg://user?id={}".format(user_b["tg_id"])
+        username_a = "@" + user_a["username"] if "username" in user_a else ""
+        username_b = "@" + user_b["username"] if "username" in user_b else ""
         title_a = "студент(-ка)" if "is_graduate" not in user_a else "выпускник(-ца)"
         title_b = "студент(-ка)" if "is_graduate" not in user_b else "выпускник(-ца)"
         university_a = user_a["university"]
@@ -68,6 +71,7 @@ async def randomize(message: types.Message):
         message_a = ROLL_MESSAGE.format(
             name=name_b,
             tg_id=tg_id_b,
+            username=username_b,
             title=title_b,
             university=university_b,
             grad_year=grad_year_b,
@@ -75,11 +79,24 @@ async def randomize(message: types.Message):
         message_b = ROLL_MESSAGE.format(
             name=name_a,
             tg_id=tg_id_a,
+            username=username_a,
             title=title_a,
             university=university_a,
             grad_year=grad_year_a,
         )
 
-        await send(bot, user_a["tg_id"], message_a, message)
-        await send(bot, user_b["tg_id"], message_b, message)
+        await send(
+            bot,
+            user_a["tg_id"],
+            message_a,
+            message,
+            parse_mode=types.ParseMode.MARKDOWN,
+        )
+        await send(
+            bot,
+            user_b["tg_id"],
+            message_b,
+            message,
+            parse_mode=types.ParseMode.MARKDOWN,
+        )
         await AirtableAPI.create_pair(int(user_a["tg_id"]), int(user_b["tg_id"]))

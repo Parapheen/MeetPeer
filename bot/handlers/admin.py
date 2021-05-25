@@ -1,5 +1,6 @@
 import asyncio
 from aiogram import types, exceptions
+import aiogram
 
 from ..logger import get_logger
 from ..airtable import AirtableAPI
@@ -7,9 +8,11 @@ from ..airtable import AirtableAPI
 log = get_logger(__name__)
 
 
-async def send(bot, user_id: str, text: str, message: types.Message):
+async def send(
+    bot: aiogram.Bot, user_id: str, text: str, message: types.Message, **kwargs
+):
     try:
-        await bot.send_message(user_id, text)
+        await bot.send_message(user_id, text, **kwargs)
     except exceptions.BotBlocked:
         log.error(f"Target [ID:{user_id}]: blocked by user")
         await message.reply(f"Target [ID:{user_id}]: blocked by user")
